@@ -1,0 +1,29 @@
+[
+  {
+    "id": "genshin",
+    "name": "Genshin Impact",
+    "color": "#60a5fa", 
+    "config": {
+      "patchDuration": 42,
+      "phaseDuration": 21
+    }
+  },
+  {
+    "id": "hsr",
+    "name": "Honkai: Star Rail",
+    "color": "#a78bfa",
+    "config": {
+      "patchDuration": 42,
+      "phaseDuration": 21
+    }
+  },
+  {
+    "id": "wuwa",
+    "name": "Wuthering Waves",
+    "color": "#34d399",
+    "config": {
+      "patchDuration": 42,
+      "phaseDuration": 21
+    }
+  }
+]

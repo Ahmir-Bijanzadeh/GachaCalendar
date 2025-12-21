@@ -1,0 +1,28 @@
+[
+  {
+    "id": "gi-5.3",
+    "gameId": "genshin",
+    "type": "patch",
+    "title": "Version 5.3",
+    "start": "2025-01-01T03:00:00Z",
+    "end": "2025-02-12T03:00:00Z",
+    "image": "/assets/gi-5.3.jpg"
+  },
+  {
+    "id": "gi-5.3-p1",
+    "gameId": "genshin",
+    "parentId": "gi-5.3",
+    "type": "banner",
+    "title": "Mavuika Banner",
+    "start": "2025-01-01T03:00:00Z",
+    "end": "2025-01-22T10:00:00Z"
+  },
+  {
+    "id": "hsr-2.7",
+    "gameId": "hsr",
+    "type": "patch",
+    "title": "Version 2.7",
+    "start": "2024-12-04T03:00:00Z",
+    "end": "2025-01-15T03:00:00Z"
+  }
+]
