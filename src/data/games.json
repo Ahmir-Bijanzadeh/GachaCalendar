@@ -18,6 +18,15 @@
     }
   },
   {
+    "id": "zzz",
+    "name": "Zenless Zone Zero",
+    "color": "#a78bfa",
+    "config": {
+      "patchDuration": 42,
+      "phaseDuration": 21
+    }
+  },
+  {
     "id": "wuwa",
     "name": "Wuthering Waves",
     "color": "#34d399",
