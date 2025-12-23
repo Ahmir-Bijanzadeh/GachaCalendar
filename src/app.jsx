@@ -172,3 +172,8 @@ function App() {
 }
 
 export default App;
+
+// to do list:
+// add base event list 
+// add functionality for additional patches automatically poplulate
+// livestream days function + code check

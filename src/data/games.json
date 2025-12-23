@@ -2,5 +2,6 @@
   { "id": "genshin", "name": "Genshin Impact", "color": "#0004ff" },
   { "id": "wuwa", "name": "Wuthering Waves", "color": "#cc0f08" },
   { "id": "zzz", "name": "Zenless Zone Zero", "color": "#b9c50b" },
-  { "id": "ak", "name": "Arknights: Endfield", "color": "#b6b5b5" }
+  { "id": "ak", "name": "Arknights: Endfield", "color": "#b6b5b5" },
+  { "id": "test", "name": "test game", "color": "#b6b5b5" }
 ]
