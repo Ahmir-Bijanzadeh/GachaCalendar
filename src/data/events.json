@@ -16,12 +16,12 @@
     "end": "2026-02-09T23:59:59Z"
   },
   {
-    "id": "genshin-6.2",
+    "id": "genshin-6.3",
     "gameId": "genshin",
     "type": "patch",
-    "title": "v6.2: Luna III",
-    "start": "2026-01-13T03:00:00Z",
-    "end": "2026-02-23T23:59:59Z"
+    "title": "v6.3: Luna IV",
+    "start": "2026-01-14T03:00:00Z",
+    "end": "2026-02-24T23:59:59Z"
   },
   {
     "id": "arknights",
