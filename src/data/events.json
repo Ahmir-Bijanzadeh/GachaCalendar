@@ -1,44 +1,34 @@
 [
   {
-    "id": "gi-5.3",
+    "id": "wuwa-3.0",
+    "gameId": "wuwa",
+    "type": "patch",
+    "title": "v3.0: We Who See the Stars",
+    "start": "2025-12-25T03:00:00Z",
+    "end": "2026-02-05T23:59:59Z"
+  },
+  {
+    "id": "zzz-2.5",
+    "gameId": "zzz",
+    "type": "patch",
+    "title": "v2.5: To Be Fuel for the Night",
+    "start": "2025-12-29T03:00:00Z",
+    "end": "2026-02-09T23:59:59Z"
+  },
+  {
+    "id": "genshin-6.2",
     "gameId": "genshin",
     "type": "patch",
-    "title": "Version 5.3",
-    "start": "2025-01-01T03:00:00Z",
-    "end": "2025-02-12T03:00:00Z",
-    "image": "/assets/gi-5.3.jpg"
+    "title": "v6.2: Luna III",
+    "start": "2026-01-13T03:00:00Z",
+    "end": "2026-02-23T23:59:59Z"
   },
   {
-    "id": "gi-5.3-p1",
-    "gameId": "genshin",
-    "parentId": "gi-5.3",
-    "type": "banner",
-    "title": "Mavuika Banner",
-    "start": "2025-01-01T03:00:00Z",
-    "end": "2025-01-22T10:00:00Z"
-  },
-  {
-    "id": "hsr-2.7",
-    "gameId": "hsr",
+    "id": "genshin-6.2",
+    "gameId": "ak",
     "type": "patch",
-    "title": "Version 2.7",
-    "start": "2024-12-04T03:00:00Z",
-    "end": "2025-01-15T03:00:00Z"
-  },
-  {
-  "id": "wuwa-1.4-event1",
-  "gameId": "wuwa",
-  "type": "event",
-  "title": "Somnium Labyrinth",
-  "start": "2025-12-22T03:00:00Z",
-  "end": "2026-01-05T03:00:00Z"
-},
-{
-  "id": "wuwa-1.4-event2",
-  "gameId": "wuwa",
-  "type": "repeatable",
-  "title": "endgame",
-  "start": "2025-12-22T03:00:00Z",
-  "end": "2026-01-05T03:00:00Z"
-}
+    "title": "v1.0",
+    "start": "2026-01-22T03:00:00Z",
+    "end": "2026-02-30T23:59:59Z"
+  }
 ]
