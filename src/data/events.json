@@ -5,7 +5,7 @@
     "type": "patch",
     "title": "v3.0: We Who See the Stars",
     "start": "2025-12-25T03:00:00Z",
-    "end": "2026-02-05T23:59:59Z"
+    "end": "2026-01-22T23:59:59Z"
   },
   {
     "id": "zzz-2.5",
@@ -24,10 +24,10 @@
     "end": "2026-02-23T23:59:59Z"
   },
   {
-    "id": "genshin-6.2",
+    "id": "arknights",
     "gameId": "ak",
     "type": "patch",
-    "title": "v1.0",
+    "title": "v1.0 release",
     "start": "2026-01-22T03:00:00Z",
     "end": "2026-02-30T23:59:59Z"
   }

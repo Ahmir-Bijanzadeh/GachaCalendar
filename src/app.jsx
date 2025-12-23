@@ -3,104 +3,58 @@ import gamesData from './data/games.json';
 import eventsData from './data/events.json';
 
 const styles = {
-  pageContainer: {
-    backgroundColor: '#242424',
-    minHeight: '100vh',
-    width: '100%',
-    color: '#eeeeee',
-    fontFamily: 'Inter, system-ui, sans-serif',
-  },
-  wrapper: { 
-    maxWidth: '1300px', 
-    margin: '0 auto', 
-    padding: '40px 20px',
-  },
-  navRow: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: '30px',
-  },
-  monthTitle: { fontSize: '2.2rem', fontWeight: '800', textTransform: 'uppercase', flex: 1, textAlign: 'center' },
+  pageContainer: { backgroundColor: '#242424', minHeight: '100vh', width: '100%', color: '#eeeeee', fontFamily: 'Inter, sans-serif' },
+  wrapper: { maxWidth: '1400px', margin: '0 auto', padding: '40px 20px' },
+  navRow: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' },
+  monthTitle: { fontSize: '2rem', fontWeight: '800', textTransform: 'uppercase', flex: 1, textAlign: 'center' },
   navButton: { backgroundColor: '#3a3a3a', color: 'white', border: 'none', padding: '12px 28px', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold' },
+  mainContent: { display: 'flex', gap: '24px', alignItems: 'flex-start' },
   
-  // New Layout: Sidebar + Grid
-  mainContent: {
-    display: 'flex',
-    gap: '20px',
-    alignItems: 'flex-start'
-  },
-  sidebar: {
-    width: '240px',
-    backgroundColor: '#2d2d2d',
-    borderRadius: '12px',
-    padding: '20px',
-    border: '1px solid #444',
-    position: 'sticky',
-    top: '20px'
-  },
-  sidebarTitle: { fontSize: '0.8rem', color: '#888', textTransform: 'uppercase', marginBottom: '15px', letterSpacing: '1px' },
-  legendItem: { display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px', fontSize: '0.85rem' },
-  colorDot: { width: '12px', height: '12px', borderRadius: '3px' },
-
-  grid: { 
-    flex: 1,
-    display: 'grid', 
-    gridTemplateColumns: 'repeat(7, 1fr)', 
-    gap: '1px', 
-    backgroundColor: '#444444', 
-    border: '1px solid #444444', 
-    borderRadius: '12px', 
-    overflow: 'hidden',
-  },
+  sidebar: { width: '320px', display: 'flex', flexDirection: 'column', gap: '12px', position: 'sticky', top: '20px', maxHeight: 'calc(100vh - 80px)', overflowY: 'auto' },
+  sidebarTitle: { fontSize: '0.75rem', color: '#888', textTransform: 'uppercase', marginBottom: '8px', letterSpacing: '1.5px', fontWeight: 'bold' },
+  eventCard: { backgroundColor: '#2d2d2d', borderRadius: '10px', padding: '16px', border: '1px solid #444', cursor: 'pointer', transition: 'all 0.2s' },
+  
+  grid: { flex: 1, display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '1px', backgroundColor: '#444444', border: '1px solid #444444', borderRadius: '12px', overflow: 'hidden' },
   dayHeader: { backgroundColor: '#2d2d2d', padding: '15px', textAlign: 'center', fontWeight: 'bold', fontSize: '0.7rem', color: '#888', textTransform: 'uppercase' },
-  cell: { backgroundColor: '#333333', minHeight: '120px', padding: '8px', display: 'flex', flexDirection: 'column', gap: '4px', cursor: 'pointer' },
-  dateNumber: { fontSize: '0.85rem', fontWeight: 'bold', color: '#666', marginBottom: '6px' },
+  cell: { backgroundColor: '#333333', minHeight: '120px', padding: '8px', display: 'flex', flexDirection: 'column', gap: '4px', cursor: 'pointer', position: 'relative' },
+  dateNumber: { fontSize: '0.85rem', fontWeight: 'bold', color: '#555', marginBottom: '6px' },
   
-  // Clean throughline bars (No Text)
-  eventBar: { 
-    height: '8px', // Thinner, cleaner bars
-    width: '100%',
-    borderRadius: '0px', // Managed dynamically
-    transition: 'opacity 0.2s'
-  },
+  // Today's highlight style
+  todayBadge: { position: 'absolute', top: '8px', right: '8px', backgroundColor: '#ff4d4d', color: 'white', fontSize: '0.6rem', padding: '2px 6px', borderRadius: '4px', fontWeight: '900' },
+  todayCell: { backgroundColor: '#3a3a3a', border: '1px solid #555' },
 
+  eventBar: { height: '6px', width: '100%', transition: 'all 0.2s', borderRadius: '2px' },
   overlay: { position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.85)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000 },
   modal: { backgroundColor: '#2d2d2d', padding: '30px', borderRadius: '20px', width: '95%', maxWidth: '450px', border: '1px solid #444' }
 };
 
 function App() {
-  const [currentDate, setCurrentDate] = useState(new Date(2026, 0, 1));
+  // 1. Initialize with current system date
+  const today = new Date();
+  const [currentDate, setCurrentDate] = useState(new Date(today.getFullYear(), today.getMonth(), 1));
+  const [selectedEvent, setSelectedEvent] = useState(null);
   const [selectedDay, setSelectedDay] = useState(null);
-
-  const [filters] = useState(() => {
-    const state = {};
-    gamesData.forEach(g => {
-      state[g.id] = { master: true, patch: true, banner: true, event: true, repeatable: true };
-    });
-    return state;
-  });
+  const [hoveredEventId, setHoveredEventId] = useState(null);
 
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
 
-  // Get all events visible in this month for the sidebar
-  const visibleEvents = eventsData.filter(e => {
+  const sidebarEvents = eventsData.filter(e => {
     const start = new Date(e.start);
     const end = new Date(e.end);
-    const monthStart = new Date(year, month, 1);
-    const monthEnd = new Date(year, month + 1, 0);
-    return start <= monthEnd && end >= monthStart;
-  });
+    const mStart = new Date(year, month, 1);
+    const mEnd = new Date(year, month + 1, 0);
+    return start <= mEnd && end >= mStart;
+  }).sort((a, b) => new Date(a.start) - new Date(b.start));
 
   const getEventsForDay = (day) => {
     if (!day) return [];
     const d = new Date(year, month, day);
     d.setHours(0,0,0,0);
     return eventsData.filter(e => {
-      const gF = filters[e.gameId];
-      if (!gF?.master || !gF[e.type]) return false;
-      return d >= new Date(e.start).setHours(0,0,0,0) && d <= new Date(e.end).setHours(23,59,59,999);
+      const start = new Date(e.start).setHours(0,0,0,0);
+      const end = new Date(e.end).setHours(23,59,59,999);
+      return d >= start && d <= end;
     });
   };
 
@@ -109,78 +63,107 @@ function App() {
       <div style={styles.wrapper}>
         <header style={styles.navRow}>
           <button style={styles.navButton} onClick={() => setCurrentDate(new Date(year, month - 1, 1))}>PREVIOUS</button>
-          <h1 style={styles.monthTitle}>{currentDate.toLocaleString('default', { month: 'long', year: 'numeric' })}</h1>
+          
+          <div style={{textAlign: 'center'}}>
+            <h1 style={styles.monthTitle}>{currentDate.toLocaleString('default', { month: 'long', year: 'numeric' })}</h1>
+            {/* Quick reset to today button */}
+            <button 
+              onClick={() => setCurrentDate(new Date(today.getFullYear(), today.getMonth(), 1))}
+              style={{background: 'none', border: 'none', color: '#888', cursor: 'pointer', fontSize: '0.8rem', textDecoration: 'underline'}}
+            >
+              Jump to Today
+            </button>
+          </div>
+
           <button style={styles.navButton} onClick={() => setCurrentDate(new Date(year, month + 1, 1))}>NEXT</button>
         </header>
 
         <div style={styles.mainContent}>
-          {/* SIDEBAR LEGEND */}
           <aside style={styles.sidebar}>
-            <div style={styles.sidebarTitle}>Active Patches</div>
-            {visibleEvents.filter(e => e.type === 'patch').map(e => (
-              <div key={e.id} style={styles.legendItem}>
-                <div style={{...styles.colorDot, backgroundColor: gamesData.find(g => g.id === e.gameId)?.color}} />
-                <div>
-                  <div style={{fontWeight: 'bold'}}>{e.title}</div>
-                  <div style={{fontSize: '0.7rem', color: '#888'}}>{gamesData.find(g => g.id === e.gameId)?.name}</div>
+            <div style={styles.sidebarTitle}>Current Timeline</div>
+            {sidebarEvents.map(e => (
+              <div 
+                key={e.id} 
+                style={{
+                  ...styles.eventCard,
+                  borderColor: hoveredEventId === e.id ? '#666' : '#444',
+                  transform: hoveredEventId === e.id ? 'translateX(4px)' : 'none'
+                }}
+                onMouseEnter={() => setHoveredEventId(e.id)}
+                onMouseLeave={() => setHoveredEventId(null)}
+                onClick={() => setSelectedEvent(e)}
+              >
+                <div style={{fontSize: '0.65rem', padding: '2px 8px', borderRadius: '4px', backgroundColor: gamesData.find(g => g.id === e.gameId)?.color, color: '#000', width: 'fit-content', fontWeight: 'bold'}}>
+                  {gamesData.find(g => g.id === e.gameId)?.name}
                 </div>
+                <div style={{fontWeight: 'bold', marginTop: '4px'}}>{e.title}</div>
               </div>
             ))}
           </aside>
 
-          {/* CALENDAR GRID */}
           <div style={styles.grid}>
-            {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(d => (
-              <div key={d} style={styles.dayHeader}>{d}</div>
-            ))}
+            {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(d => <div key={d} style={styles.dayHeader}>{d}</div>)}
+            {Array.from({ length: new Date(year, month, 1).getDay() }).map((_, i) => <div key={`e-${i}`} style={{...styles.cell, backgroundColor: '#2a2a2a'}} />)}
             
-            {Array.from({ length: new Date(year, month, 1).getDay() }).map((_, i) => (
-              <div key={`empty-${i}`} style={{ ...styles.cell, backgroundColor: '#2a2a2a' }} />
-            ))}
-
             {Array.from({ length: new Date(year, month + 1, 0).getDate() }).map((_, i) => {
               const day = i + 1;
               const dayEvents = getEventsForDay(day);
-              const cellDate = new Date(year, month, day);
+              
+              // Check if this cell is today's date
+              const isToday = today.getDate() === day && today.getMonth() === month && today.getFullYear() === year;
 
               return (
-                <div key={day} style={styles.cell} onClick={() => setSelectedDay(day)}>
-                  <span style={styles.dateNumber}>{day}</span>
-                  {dayEvents.map(e => {
-                    const isStart = new Date(e.start).toDateString() === cellDate.toDateString();
-                    const isEnd = new Date(e.end).toDateString() === cellDate.toDateString();
-                    return (
-                      <div key={e.id} style={{
-                        ...styles.eventBar, 
-                        backgroundColor: gamesData.find(g => g.id === e.gameId)?.color,
-                        borderTopLeftRadius: isStart ? '4px' : '0px',
-                        borderBottomLeftRadius: isStart ? '4px' : '0px',
-                        borderTopRightRadius: isEnd ? '4px' : '0px',
-                        borderBottomRightRadius: isEnd ? '4px' : '0px',
-                      }} />
-                    );
-                  })}
+                <div 
+                  key={day} 
+                  style={{...styles.cell, ...(isToday ? styles.todayCell : {})}} 
+                  onClick={() => setSelectedDay(day)}
+                >
+                  <span style={{...styles.dateNumber, color: isToday ? '#fff' : '#555'}}>{day}</span>
+                  {isToday && <span style={styles.todayBadge}>TODAY</span>}
+                  
+                  {dayEvents.map(e => (
+                    <div key={e.id} style={{
+                      ...styles.eventBar, 
+                      backgroundColor: gamesData.find(g => g.id === e.gameId)?.color,
+                      opacity: (hoveredEventId === e.id || !hoveredEventId) ? 1 : 0.2,
+                      height: hoveredEventId === e.id ? '10px' : '6px',
+                    }} />
+                  ))}
                 </div>
               );
             })}
           </div>
         </div>
 
-        {/* Modal logic remains for detail viewing */}
+        {/* MODALS (Same as previous version) */}
+        {selectedEvent && (
+          <div style={styles.overlay} onClick={() => setSelectedEvent(null)}>
+            <div style={styles.modal} onClick={e => e.stopPropagation()}>
+              <h3 style={{color: gamesData.find(g => g.id === selectedEvent.gameId)?.color, marginTop: 0}}>{selectedEvent.title}</h3>
+              <p style={{fontSize: '0.9rem', color: '#ccc'}}>{selectedEvent.type.toUpperCase()} Details</p>
+              <div style={{padding: '15px', backgroundColor: '#333', borderRadius: '8px', marginBottom: '20px', fontSize: '0.85rem'}}>
+                Starts: {new Date(selectedEvent.start).toLocaleString()}<br/>
+                Ends: {new Date(selectedEvent.end).toLocaleString()}
+              </div>
+              <button style={{width: '100%', padding: '12px', borderRadius: '8px', border: 'none', cursor: 'pointer', backgroundColor: '#eee', fontWeight: 'bold'}} onClick={() => setSelectedEvent(null)}>CLOSE</button>
+            </div>
+          </div>
+        )}
+
         {selectedDay && (
           <div style={styles.overlay} onClick={() => setSelectedDay(null)}>
             <div style={styles.modal} onClick={e => e.stopPropagation()}>
-              <h2 style={{ marginBottom: '20px' }}>{currentDate.toLocaleString('default', { month: 'long' })} {selectedDay}</h2>
+              <h2 style={{margin: '0 0 20px 0'}}>{currentDate.toLocaleString('default', { month: 'long' })} {selectedDay}</h2>
               {getEventsForDay(selectedDay).map(e => (
-                <div key={e.id} style={{ display: 'flex', gap: '15px', padding: '15px 0', borderBottom: '1px solid #444' }}>
-                  <div style={{ width: '15px', height: '15px', borderRadius: '4px', backgroundColor: gamesData.find(g => g.id === e.gameId)?.color }} />
+                <div key={e.id} style={{display: 'flex', alignItems: 'center', gap: '15px', padding: '12px 0', borderBottom: '1px solid #444'}}>
+                  <div style={{width: '12px', height: '12px', borderRadius: '3px', backgroundColor: gamesData.find(g => g.id === e.gameId)?.color}} />
                   <div>
-                    <div style={{ fontWeight: 'bold' }}>{e.title}</div>
-                    <div style={{ fontSize: '0.8rem', color: '#888' }}>{e.type.toUpperCase()}</div>
+                    <div style={{fontWeight: 'bold'}}>{e.title}</div>
+                    <div style={{fontSize: '0.75rem', color: '#888'}}>{e.type}</div>
                   </div>
                 </div>
               ))}
-              <button onClick={() => setSelectedDay(null)} style={{ width: '100%', padding: '15px', marginTop: '20px', borderRadius: '8px', border: 'none', backgroundColor: '#eee', color: '#000', fontWeight: 'bold', cursor: 'pointer' }}>CLOSE</button>
+              <button style={{width: '100%', padding: '12px', marginTop: '20px', borderRadius: '8px', border: 'none', cursor: 'pointer', backgroundColor: '#333', color: 'white'}} onClick={() => setSelectedDay(null)}>CLOSE</button>
             </div>
           </div>
         )}
